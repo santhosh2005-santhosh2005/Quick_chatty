@@ -39,33 +39,16 @@ export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id.toString(); // Convert to string for consistency
 
-    // First, try to get contacts
-    const userWithContacts = await User.findById(loggedInUserId).populate("contacts", "-password");
-
-    let filteredUsers;
-
-    if (userWithContacts.contacts && userWithContacts.contacts.length > 0) {
-      // If user has contacts, return only contacts
-      // Convert ObjectId to string for consistency
-      filteredUsers = userWithContacts.contacts.map(user => {
-        const userObj = user.toObject ? user.toObject() : user;
-        return {
-          ...userObj,
-          _id: user._id.toString()
-        };
-      });
-    } else {
-      // If no contacts, return all users (original behavior)
-      // Convert ObjectId to string for consistency
-      const allUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
-      filteredUsers = allUsers.map(user => {
-        const userObj = user.toObject ? user.toObject() : user;
-        return {
-          ...userObj,
-          _id: user._id.toString()
-        };
-      });
-    }
+    // Simplified: Return all users except the currently logged-in user
+    const allUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+    
+    const filteredUsers = allUsers.map(user => {
+      const userObj = user.toObject ? user.toObject() : user;
+      return {
+        ...userObj,
+        _id: user._id.toString()
+      };
+    });
 
     res.status(200).json(filteredUsers);
   } catch (error) {
