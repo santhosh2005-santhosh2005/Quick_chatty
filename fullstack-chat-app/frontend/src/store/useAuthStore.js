@@ -186,72 +186,33 @@ export const useAuthStore = create((set, get) => ({
 
     console.log("Creating new socket connection for user:", authUser._id);
 
-    // Try to connect to socket with port fallback
-    let newSocket;
-    let connected = false;
+    // Point all development connections strictly to the main backend port
+    const url = import.meta.env.MODE === "development" 
+      ? "http://localhost:5001" 
+      : (import.meta.env.VITE_SOCKET_URL || "/");
+
+    console.log("Creating new socket connection for user:", authUser._id, "URL:", url);
+
+    const newSocket = io(url, {
+      query: {
+        userId: authUser._id,
+      },
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: 10,
+    });
     
-    // Try each port until we find one that works
-    for (let i = 0; i < SOCKET_PORTS.length && !connected; i++) {
-      try {
-        const url = import.meta.env.MODE === "development" 
-          ? `http://localhost:${SOCKET_PORTS[i]}` 
-          : "/";
-          
-        newSocket = io(url, {
-          query: {
-            userId: authUser._id,
-          },
-          transports: ["websocket", "polling"],
-          timeout: 10000,
-          reconnection: true,
-          reconnectionAttempts: 5,
-        });
-        
-        // Test connection
-        newSocket.connect();
-        
-        // Handle connection events
-        newSocket.on("connect", () => {
-          console.log("Socket connected successfully:", newSocket.id);
-          // Request current online users when connected
-          newSocket.emit("requestOnlineUsers");
-          connected = true;
-        });
-        
-        // Handle connection errors
-        newSocket.on("connect_error", (error) => {
-          console.error(`Socket connection error on port ${SOCKET_PORTS[i]}:`, error);
-          if (newSocket) {
-            newSocket.disconnect();
-          }
-        });
-        
-        newSocket.on("connect_timeout", (timeout) => {
-          console.error(`Socket connection timeout on port ${SOCKET_PORTS[i]}:`, timeout);
-          if (newSocket) {
-            newSocket.disconnect();
-          }
-        });
-        
-        // Small delay to allow connection to establish
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        if (newSocket.connected) {
-          console.log(`Connected to socket on port ${SOCKET_PORTS[i]}`);
-          break;
-        }
-      } catch (error) {
-        console.error(`Failed to connect to socket on port ${SOCKET_PORTS[i]}:`, error);
-        if (newSocket) {
-          newSocket.disconnect();
-        }
-      }
-    }
+    // Explicitly connect
+    newSocket.connect();
     
-    if (!connected) {
-      console.error("Failed to connect to socket on any port");
-      return;
-    }
+    newSocket.on("connect", () => {
+      console.log("Socket connected successfully:", newSocket.id);
+      newSocket.emit("requestOnlineUsers");
+    });
+    
+    newSocket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
 
     set({ socket: newSocket });
 

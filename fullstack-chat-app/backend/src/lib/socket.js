@@ -52,11 +52,15 @@ export function initializeSocket(server) {
     }
 
     // io.emit() is used to send events to all the connected clients
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    const onlineUsers = Object.keys(userSocketMap);
+    console.log(`[Socket] Broadcasting online users: ${JSON.stringify(onlineUsers)}`);
+    io.emit("getOnlineUsers", onlineUsers);
 
     // Listen for requestOnlineUsers event from frontend
     socket.on("requestOnlineUsers", () => {
-      socket.emit("getOnlineUsers", Object.keys(userSocketMap));
+      const currentOnline = Object.keys(userSocketMap);
+      console.log(`[Socket] Manual request from ${userIdStr}. Sending: ${JSON.stringify(currentOnline)}`);
+      socket.emit("getOnlineUsers", currentOnline);
     });
 
     socket.on("disconnect", () => {
