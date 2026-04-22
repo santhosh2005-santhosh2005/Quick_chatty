@@ -5,7 +5,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, removeContact } = useChatStore();
+  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, removeContact, unreadUsers } = useChatStore();
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -94,10 +94,14 @@ const Sidebar = () => {
                   )}
                 </div>
 
-                <div className="hidden lg:block text-left min-w-0">
+                <div className="hidden lg:block text-left min-w-0 flex-1">
                   <div className="font-medium truncate">{user.fullName}</div>
                   <div className="text-sm text-zinc-400">
-                    {isOnline ? "Online" : "Offline"}
+                    {useChatStore.getState().unreadUsers.includes(user._id) ? (
+                       <span className="text-primary font-bold animate-pulse">New Message</span>
+                    ) : (
+                       isOnline ? "Online" : "Offline"
+                    )}
                   </div>
                 </div>
               </button>

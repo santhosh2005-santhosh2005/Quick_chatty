@@ -12,6 +12,7 @@ export const useChatStore = create((set, get) => ({
   isMessagesLoading: false,
   isContactsLoading: false,
   invitations: [],
+  unreadUsers: [], // Array of user IDs who sent messages while not selected
 
   // State for encryption demonstration
   isEncryptionDemoEnabled: false,
@@ -146,14 +147,23 @@ export const useChatStore = create((set, get) => ({
     socket.on("newMessage", (newMessage) => {
       console.log("[useChatStore] Received 'newMessage' event:", newMessage);
       
-      const isMessageSentFromSelectedUser = String(newMessage.senderId) === String(selectedUser._id);
-      console.log(`[useChatStore] Sender: ${newMessage.senderId}, Selected: ${selectedUser._id}, Match: ${isMessageSentFromSelectedUser}`);
+      const { selectedUser, messages } = get();
+      const isMessageSentFromSelectedUser = selectedUser && String(newMessage.senderId) === String(selectedUser._id);
 
-      if (!isMessageSentFromSelectedUser) return;
-
-      set({
-        messages: [...get().messages, newMessage],
-      });
+      if (isMessageSentFromSelectedUser) {
+        // If we're chatting with them, just add to the message list
+        set({
+          messages: [...messages, newMessage],
+        });
+      } else {
+        // If we're NOT chatting with them, track them as unread
+        console.log(`[useChatStore] New background message from ${newMessage.senderId}`);
+        const { unreadUsers } = get();
+        if (!unreadUsers.includes(newMessage.senderId)) {
+          set({ unreadUsers: [...unreadUsers, newMessage.senderId] });
+        }
+        get().getUsers(); // Refresh sidebar
+      }
     });
 
     // Add listener for message deletion for you
@@ -294,7 +304,18 @@ export const useChatStore = create((set, get) => ({
     socket.off("userUpdated");
   },
 
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setSelectedUser: (selectedUser) => {
+    // Clear unread status when a user is selected
+    if (selectedUser) {
+      const { unreadUsers } = get();
+      set({ 
+        selectedUser, 
+        unreadUsers: unreadUsers.filter(id => String(id) !== String(selectedUser._id)) 
+      });
+    } else {
+      set({ selectedUser });
+    }
+  },
 
   // Function to accept an invitation
   acceptInvitation: (invitationData) => {
