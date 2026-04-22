@@ -270,6 +270,23 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  handleNewMessage: (newMessage) => {
+    const { selectedUser, unreadUsers, getUsers } = get();
+    
+    // 1. If it's for the currently open chat
+    if (selectedUser && String(newMessage.senderId) === String(selectedUser._id)) {
+      set((state) => ({
+        messages: [...state.messages, newMessage],
+      }));
+    } else {
+      // 2. If it's for another chat, mark as unread and refresh sidebar
+      if (!unreadUsers.includes(newMessage.senderId)) {
+        set((state) => ({ unreadUsers: [...state.unreadUsers, newMessage.senderId] }));
+      }
+      getUsers();
+    }
+  },
+
   acceptCall: (to) => {
     const socket = useAuthStore.getState().socket;
     if (socket) {

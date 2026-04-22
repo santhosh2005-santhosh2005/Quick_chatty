@@ -219,17 +219,15 @@ export const useAuthStore = create((set, get) => ({
     console.log("Setting up socket event listener for getOnlineUsers");
     newSocket.on("getOnlineUsers", (userIds) => {
       console.log("Received online users update:", userIds);
-      // Update store
       set({ onlineUsers: [...userIds] });
     });
     
-    // Listen for specific user offline events
-    newSocket.on("userOffline", (userId) => {
-      console.log("User went offline:", userId);
-      const { onlineUsers } = get();
-      const updatedOnlineUsers = onlineUsers.filter(id => id !== userId);
-      set({ onlineUsers: updatedOnlineUsers });
-      console.log("Updated online users after user offline:", updatedOnlineUsers);
+    // Master Message Listener - Always active, never misses a beat
+    newSocket.on("newMessage", (newMessage) => {
+      console.log("[Socket Master] New message received globally:", newMessage);
+      // We'll import and use the ChatStore action directly
+      const chatStore = window.chatStore; // Or use a direct import if possible
+      if (chatStore) chatStore.handleNewMessage(newMessage);
     });
     
     // Also listen for any disconnect events

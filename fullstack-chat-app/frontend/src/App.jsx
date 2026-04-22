@@ -13,6 +13,7 @@ import LandingPage from "./pages/LandingPage";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
+import { useChatStore } from "./store/useChatStore";
 import { useEffect } from "react";
 
 import { Loader } from "lucide-react";
@@ -24,10 +25,13 @@ const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
   const location = useLocation();
+  const chatStore = useChatStore();
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    // Expose chat store for the Master Socket Listener in AuthStore
+    window.chatStore = chatStore;
+  }, [checkAuth, chatStore]);
 
   console.log("App Auth State:", { isCheckingAuth, authUser: authUser?._id, path: location.pathname });
 
