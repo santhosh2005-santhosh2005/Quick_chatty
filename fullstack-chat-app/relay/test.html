@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Yjs Test</title>
+</head>
+<body>
+  <textarea id="editor"></textarea>
+
+  <script type="module">
+    import * as Y from 'yjs';
+    import { WebsocketProvider } from 'y-websocket';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('sessionId');
+    const token = urlParams.get('token');
+
+    const ydoc = new Y.Doc();
+    const provider = new WebsocketProvider('ws://localhost:5002', sessionId, ydoc, { params: { token } });
+    const ytext = ydoc.getText('codetext');
+
+    const editor = document.getElementById('editor');
+    ytext.observe(event => {
+      editor.value = ytext.toString();
+    });
+
+    editor.addEventListener('input', event => {
+      ytext.delete(0, ytext.length);
+      ytext.insert(0, event.target.value);
+    });
+  </script>
+</body>
+</html>

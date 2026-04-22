@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickChat | The Future of Secure AI Messaging</title>
+    <meta name="description"
+        content="QuickChat is a privacy-first messaging app powered by AI. Encrypted, fast, and intelligent chat for modern teams and individuals.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <!-- Icons and Animation Libraries -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+    <!-- Loader Section -->
+    <div id="loader" class="loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <span class="logo-icon"></span>
+                <span class="logo-text">QuickChat</span>
+            </div>
+            <div class="percentage-container">
+                <span id="percentage">0</span>%
+            </div>
+        </div>
+        <div class="loader-bg"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="app" class="hidden">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="nav-pill-container">
+                <!-- Logo -->
+                <div class="logo">
+                    <span class="logo-icon-wrapper"><i data-lucide="message-circle" class="logo-icon-svg"></i></span>
+                    <span class="logo-text">QuickChat</span>
+                </div>
+                <!-- Center Pill Links -->
+                <div class="nav-pill">
+                    <a href="#hero" class="nav-pill-link active">Home</a>
+                    <a href="#features" class="nav-pill-link">Products</a>
+                    <a href="#video-feature" class="nav-pill-link">Blog</a>
+                    <a href="#pricing" class="nav-pill-link">About</a>
+                </div>
+                <!-- Actions -->
+                <div class="nav-actions">
+                    <a href="http://localhost:5731/login" class="nav-btn-link">Log In</a>
+                    <a href="http://localhost:5731/signup" class="btn-purple-pill">Get Started <i data-lucide="arrow-right"
+                            class="arrow"></i></a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+
+                    <h1 class="hero-title animate-scroll">
+                        Connect.<br>
+                        <span class="text-purple">Chat.</span><br>
+                        Stay in touch.
+                    </h1>
+                    <h3 class="hero-title-italic animate-scroll">
+                        Seamless Messaging.<br>
+                        Connected Conversations.
+                    </h3>
+                    <p class="hero-subtitle animate-scroll">
+                        A fast, secure, and beautiful messaging platform that keeps you connected with anyone, anywhere
+                        in the world.
+                    </p>
+                    <div class="hero-cta animate-scroll">
+                        <a href="http://localhost:5731/signup" class="btn-purple-pill-lg">Get Started <i data-lucide="arrow-right"
+                                class="arrow"></i></a>
+                        <a href="#download" class="btn-white-pill"><i data-lucide="download" class="download-icon"></i>
+                            Download App</a>
+                    </div>
+
+                    <div class="hero-features animate-scroll">
+                        <span class="feature-item"><i data-lucide="shield-check"></i> Secure</span>
+                        <span class="divider">|</span>
+                        <span class="feature-item"><i data-lucide="lock"></i> Private</span>
+                        <span class="divider">|</span>
+                        <span class="feature-item"><i data-lucide="check-circle-2"></i> Reliable</span>
+                    </div>
+
+
+                </div>
+
+                <div class="hero-visual animate-scroll">
+                    <!-- Phone Mockup Container (Coded UI) -->
+                    <div class="phones-container">
+                        <!-- Left Phone (Purple) -->
+                        <div class="phone phone-left">
+                            <div class="phone-screen phone-purple">
+                                <div class="phone-header">
+                                    <div class="phone-notch"></div>
+                                </div>
+                                <div class="phone-content-center">
+                                    <div class="phone-logo">
+                                        <i data-lucide="message-circle" class="logo-icon-phone"></i>
+                                    </div>
+                                    <h2 class="phone-title">QuickChat</h2>
+                                    <p class="phone-subtitle-text">Seamless Messaging.<br>Connected Conversations.</p>
+                                    <div class="phone-buttons">
+                                        <a href="http://localhost:5731/signup" class="phone-btn-white">Create Account</a>
+                                        <a href="http://localhost:5731/login" class="phone-btn-outline">Log In</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Phone (Chat List) -->
+                        <div class="phone phone-right">
+                            <div class="phone-screen phone-white">
+                                <div class="phone-header-white">
+                                    <div class="phone-notch-black"></div>
+                                    <div class="phone-top-info">
+                                        <span class="phone-time">9:41</span>
+                                        <div class="phone-status-icons">
+                                            <i data-lucide="signal" class="status-icon"></i>
+                                            <i data-lucide="wifi" class="status-icon"></i>
+                                            <i data-lucide="battery" class="status-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="phone-chat-content">
+                                    <div class="chat-header-row">
+                                        <span class="chat-app-name">QuickChat</span>
+                                        <i data-lucide="edit-3" class="edit-icon"></i>
+                                    </div>
+                                    <div class="search-bar-phone">
+                                        <i data-lucide="search" class="search-icon-phone"></i>
+                                        <span>Search messages</span>
+                                    </div>
+                                    <div class="stories-row">
+                                        <div class="story-item">
+                                            <div class="avatar avatar-add"><i data-lucide="plus"></i></div>
+                                            <span>Add</span>
+                                        </div>
+                                        <div class="story-item">
+                                            <div class="avatar avatar-1"></div><span>Min Seok</span>
+                                        </div>
+                                        <div class="story-item">
+                                            <div class="avatar avatar-2"></div><span>Yeollie</span>
+                                        </div>
+                                        <div class="story-item">
+                                            <div class="avatar avatar-3"></div><span>Yixing</span>
+                                        </div>
+                                        <div class="story-item">
+                                            <div class="avatar avatar-4"></div><span>Se Hun</span>
+                                        </div>
+                                    </div>
+                                    <div class="chat-list">
+                                        <div class="chat-item">
+                                            <div class="avatar avatar-1"></div>
+                                            <div class="chat-info">
+                                                <div class="chat-name-row">
+                                                    <h4>Min Seok Hyung</h4><span class="chat-time">1m</span>
+                                                </div>
+                                                <div class="chat-msg-row">
+                                                    <p>See you soon!</p><span class="unread-count">2</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="chat-item">
+                                            <div class="avatar avatar-2"></div>
+                                            <div class="chat-info">
+                                                <div class="chat-name-row">
+                                                    <h4>Yeollie Hyung</h4><span class="chat-time">3m</span>
+                                                </div>
+                                                <div class="chat-msg-row">
+                                                    <p><i data-lucide="mic" class="inline-icon"></i> Voice Message</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="chat-item">
+                                            <div class="avatar avatar-3"></div>
+                                            <div class="chat-info">
+                                                <div class="chat-name-row">
+                                                    <h4>Yixing Gege</h4><span class="chat-time">12m</span>
+                                                </div>
+                                                <div class="chat-msg-row">
+                                                    <p><i data-lucide="image" class="inline-icon"></i> Photo</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="chat-item">
+                                            <div class="avatar avatar-4"></div>
+                                            <div class="chat-info">
+                                                <div class="chat-name-row">
+                                                    <h4>Se Hun Oh</h4><span class="chat-time">1h</span>
+                                                </div>
+                                                <div class="chat-msg-row">
+                                                    <p>Let's meet at 5pm</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="phone-nav-bottom">
+                                        <div class="nav-item active"><i
+                                                data-lucide="message-circle"></i><span>Chats</span></div>
+                                        <div class="nav-item"><i data-lucide="phone"></i><span>Calls</span></div>
+                                        <div class="nav-item nav-plus"><i data-lucide="plus"></i></div>
+                                        <div class="nav-item"><i data-lucide="users"></i><span>Contacts</span></div>
+                                        <div class="nav-item"><i data-lucide="settings"></i><span>Settings</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Icons (Keeping these for extra flair) -->
+                    <div class="floating-element float-1"><i data-lucide="video"></i></div>
+                    <div class="floating-element float-2"><i data-lucide="message-square"></i></div>
+                    <div class="floating-element float-3"><i data-lucide="send"></i></div>
+                    <div class="floating-element float-4"><i data-lucide="mic"></i></div>
+                    <div class="floating-element float-5"><i data-lucide="lock"></i></div>
+                </div>
+            </div>
+
+            <div class="hero-bg-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+
+            <!-- Wavy Bottom Shape -->
+            <div class="hero-wave">
+                <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+                    <path fill="#ffffff" fill-opacity="1"
+                        d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
+                    </path>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Page 2: Cinematic Horizontal Scroll Section -->
+        <section id="experience" class="cine-scroll-wrapper bg-grid">
+            <div class="cine-pin-container">
+                <!-- Background Parallax Text -->
+                <div class="cine-bg-text-wrapper">
+                    <span class="cine-bg-word outlined">QUICKCHAT</span>
+                    <span class="cine-bg-word">QUICKCHAT</span>
+                    <span class="cine-bg-word outlined">QUICKCHAT</span>
+                    <span class="cine-bg-word">QUICKCHAT</span>
+                </div>
+
+                <!-- Horizontal Content Track -->
+                <div class="cine-horizontal-track">
+                    <!-- Intro Card -->
+                    <div class="cine-card cine-intro">
+                        <div class="cine-card-content"
+                            style="border: none; background: transparent; backdrop-filter: none;">
+                            <h2 style="color: #FFFFFF;">Engineered for<br><span class="outlined">OUTCOMES.</span></h2>
+                            <p style="color: #FFFFFF; opacity: 0.6; font-size: 1.2rem; max-width: 500px;">QuickChat is
+                                not just an application. it's a paradigm shift in how we stay connected.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 1: Encryption -->
+                    <div class="cine-card">
+                        <div class="cine-card-content">
+                            <div class="card-index">[ 01_ENCRYPTION ]</div>
+                            <h3>Military-grade end-to-end encryption by default.</h3>
+                            <p>We use industry-standard protocols to ensure your conversations remain between you and
+                                your recipients. Zero-knowledge architecture guaranteed.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Intelligence -->
+                    <div class="cine-card">
+                        <div class="cine-card-content">
+                            <div class="card-index">[ 02_INTELLIGENCE ]</div>
+                            <h3>Context-aware AI that assists without invading.</h3>
+                            <p>Our localized neural engine helps draft replies and summarizes long threads without your
+                                data ever leaving your device's secure enclave.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Performance -->
+                    <div class="cine-card">
+                        <div class="cine-card-content">
+                            <div class="card-index">[ 03_PERFORMANCE ]</div>
+                            <h3>Optimized for the edge, delivered with zero latency.</h3>
+                            <p>Engineered with a lightweight core that works flawlessly even on 2G networks.
+                                Connectivity is a right, not a privilege.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Global -->
+                    <div class="cine-card">
+                        <div class="cine-card-content">
+                            <div class="card-index">[ 04_GLOBAL ]</div>
+                            <h3>Seamless cross-platform synchronization.</h3>
+                            <p>Switch between mobile, tablet, and desktop without missing a single character. Your
+                                workspace follows you everywhere.</p>
+                        </div>
+                    </div>
+
+                    <!-- Final Cinematic Outro -->
+                    <div class="cine-card cine-intro">
+                        <div class="cine-card-content"
+                            style="border: none; background: transparent; backdrop-filter: none;">
+                            <h2 style="color: #FFFFFF;">Ready for the<br><span class="outlined">FUTURE.</span></h2>
+                            <p style="color: #FFFFFF; opacity: 0.6; font-size: 1.2rem;">Join the revolution of private
+                                communication today.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 3: Full Screen Video -->
+        <section id="video-feature" class="section section-video"
+            style="height: 100vh; padding: 0; position: relative; overflow: hidden; background: #000; width: 100vw;">
+            <video autoplay loop muted playsinline
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                <source src="/hero-video.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%); pointer-events: none; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 60px;">
+                <h2 class="animate-scroll"
+                    style="color: white; font-size: 3.5rem; font-weight: 800; text-align: center;">See QuickChat in
+                    Action</h2>
+            </div>
+        </section>
+
+        <!-- Page 4 & 5: Bento Grid Feature Showcase -->
+        <section id="features" class="section-bento">
+            <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 40px;">
+                <div class="bento-grid">
+
+                    <!-- ========== CARD 1: Chat Freely (Top Left - Large) ========== -->
+                    <div class="bento-card card-1 animate-scroll">
+                        <!-- Floating 3D Emojis -->
+                        <div
+                            style="position:absolute;top:30px;left:30px;font-size:2.5rem;z-index:5;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                            👋</div>
+                        <div
+                            style="position:absolute;bottom:80px;left:20px;font-size:2rem;z-index:5;filter:drop-shadow(0 8px 15px rgba(0,0,0,0.15));">
+                            😄</div>
+                        <div
+                            style="position:absolute;bottom:30px;left:180px;font-size:2.5rem;z-index:5;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.15));transform:rotate(-15deg)">
+                            🎤</div>
+                        <div
+                            style="position:absolute;bottom:20px;right:230px;font-size:2rem;z-index:5;filter:drop-shadow(0 8px 15px rgba(0,0,0,0.1));transform:rotate(10deg)">
+                            😁</div>
+
+                        <!-- Phone 1: Purple Welcome Screen -->
+                        <div class="bento-phone-mock" style="position:relative;z-index:4;">
+                            <div
+                                style="width:210px;height:420px;background:#1a1a1a;border-radius:38px;padding:8px;box-shadow:0 40px 80px rgba(0,0,0,0.25);border:3px solid #333;">
+                                <div
+                                    style="width:100%;height:100%;border-radius:30px;background:#7B61FF;overflow:hidden;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;">
+                                    <!-- Notch -->
+                                    <div
+                                        style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:80px;height:20px;background:#1a1a1a;border-radius:0 0 12px 12px;z-index:10;">
+                                    </div>
+                                    <!-- Content -->
+                                    <p
+                                        style="color:rgba(255,255,255,0.7);font-size:0.65rem;margin-bottom:8px;font-weight:600;letter-spacing:1px;">
+                                        Welcome to</p>
+                                    <div
+                                        style="width:52px;height:52px;background:white;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+                                        <i data-lucide="message-circle"
+                                            style="color:#7B61FF;width:28px;height:28px;"></i>
+                                    </div>
+                                    <h3 style="color:white;font-size:1.4rem;font-weight:800;margin-bottom:4px;">
+                                        QuickChat</h3>
+                                    <p
+                                        style="color:rgba(255,255,255,0.7);font-size:0.6rem;line-height:1.4;margin-bottom:25px;">
+                                        Seamless Messaging.<br>Connected Conversations.</p>
+                                    <a href="http://localhost:5731/signup"
+                                        style="display:block;width:100%;background:white;color:#7B61FF;padding:10px;border-radius:10px;font-weight:700;font-size:0.75rem;margin-bottom:10px;text-decoration:none;">
+                                        Get Started</a>
+                                    <a href="http://localhost:5731/login" style="color:rgba(255,255,255,0.6);font-size:0.6rem;text-decoration:none;">Already have an account?
+                                        Login</a>
+                                    <!-- Floating chat bubble -->
+                                    <div
+                                        style="position:absolute;top:80px;left:-35px;background:white;border-radius:12px;padding:8px 12px;font-size:0.6rem;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,0.15);white-space:nowrap;">
+                                        Let's catch up! 😊</div>
+                                    <div
+                                        style="position:absolute;top:115px;left:-50px;background:white;border-radius:12px;padding:6px 10px;font-size:0.55rem;box-shadow:0 6px 15px rgba(0,0,0,0.1);white-space:nowrap;display:flex;align-items:center;gap:6px;">
+                                        <div
+                                            style="width:20px;height:8px;background:#7B61FF;border-radius:4px;position:relative;">
+                                            <div
+                                                style="position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:#FF6B6B;border-radius:50%;">
+                                            </div>
+                                        </div>
+                                        0:08
+                                    </div>
+                                    <div
+                                        style="position:absolute;top:40px;right:-30px;background:white;border-radius:12px;padding:6px 10px;font-size:0.55rem;font-weight:600;box-shadow:0 6px 15px rgba(0,0,0,0.1);white-space:nowrap;">
+                                        Hey! 👋</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Text Content -->
+                        <div class="bento-content" style="flex:1;padding-left:20px;">
+                            <h2 class="bento-title">Chat <span class="text-purple">freely,</span><br>connect deeply.
+                            </h2>
+                            <p class="bento-desc">QuickChat helps you stay in touch with the people who matter most.</p>
+
+                        </div>
+                    </div>
+
+                    <!-- ========== CARD 2: One App (Top Right) ========== -->
+                    <div class="bento-card card-2 animate-scroll"
+                        style="flex-direction:column;justify-content:space-between;">
+                        <!-- Text Content -->
+                        <div>
+                            <h2 class="bento-title" style="font-size:2rem;">One app,<br>endless ways<br><span
+                                    class="text-purple">to connect</span></h2>
+                            <p class="bento-desc">Text, voice, video, and more — all in one place.</p>
+                        </div>
+
+                        <!-- Phone 2: Active Chat with media -->
+                        <div style="position:relative;display:flex;justify-content:center;align-items:flex-end;">
+                            <!-- Floating feature icons -->
+                            <div style="position:absolute;top:20px;left:0px;z-index:10;">
+                                <div
+                                    style="width:44px;height:44px;background:#7B61FF;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(123,97,255,0.4);">
+                                    <i data-lucide="video" style="color:white;width:20px;height:20px;"></i>
+                                </div>
+                            </div>
+                            <div style="position:absolute;top:20px;right:0px;z-index:10;">
+                                <div
+                                    style="width:44px;height:44px;background:#FF7B61;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(255,123,97,0.4);">
+                                    <i data-lucide="mic" style="color:white;width:20px;height:20px;"></i>
+                                </div>
+                            </div>
+                            <div style="position:absolute;bottom:80px;left:-10px;z-index:10;">
+                                <div
+                                    style="width:40px;height:40px;background:#45D4B3;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(69,212,179,0.4);">
+                                    <i data-lucide="message-square" style="color:white;width:18px;height:18px;"></i>
+                                </div>
+                            </div>
+
+                            <!-- Phone mockup -->
+                            <div
+                                style="width:190px;height:370px;background:#1a1a1a;border-radius:36px;padding:7px;box-shadow:0 30px 70px rgba(0,0,0,0.2);border:3px solid #333;">
+                                <div
+                                    style="width:100%;height:100%;border-radius:28px;background:white;overflow:hidden;display:flex;flex-direction:column;">
+                                    <!-- Phone header -->
+                                    <div
+                                        style="position:relative;padding:18px 15px 10px;background:white;border-bottom:1px solid #f0f0f0;">
+                                        <div
+                                            style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:70px;height:15px;background:#1a1a1a;border-radius:0 0 10px 10px;">
+                                        </div>
+                                        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+                                            <i data-lucide="chevron-left"
+                                                style="width:16px;height:16px;color:#7B61FF;"></i>
+                                            <div
+                                                style="width:30px;height:30px;background:#E8F4FD;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#7B61FF;">
+                                                B</div>
+                                            <div>
+                                                <div style="font-size:0.7rem;font-weight:800;">Besties</div>
+                                                <div style="font-size:0.55rem;color:#9ca3af;">3 members</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Chat messages -->
+                                    <div
+                                        style="flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;background:#f9f9f9;overflow:hidden;">
+                                        <div
+                                            style="background:white;padding:8px 10px;border-radius:12px 12px 12px 3px;font-size:0.6rem;max-width:80%;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                            Hey everyone! 🎉<br><span style="color:#bbb;font-size:0.5rem;">10:21</span>
+                                        </div>
+                                        <!-- Voice message -->
+                                        <div
+                                            style="background:#7B61FF;padding:8px 10px;border-radius:12px 12px 3px 12px;font-size:0.6rem;max-width:85%;align-self:flex-end;display:flex;align-items:center;gap:6px;">
+                                            <div
+                                                style="width:16px;height:16px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                                                <i data-lucide="play"
+                                                    style="color:white;width:8px;height:8px;fill:white;"></i></div>
+                                            <div
+                                                style="flex:1;height:3px;background:rgba(255,255,255,0.3);border-radius:3px;position:relative;">
+                                                <div
+                                                    style="position:absolute;left:0;top:0;width:40%;height:100%;background:white;border-radius:3px;">
+                                                </div>
+                                            </div>
+                                            <span style="color:rgba(255,255,255,0.8);font-size:0.5rem;">0:08</span>
+                                        </div>
+                                        <!-- Type input -->
+                                        <div
+                                            style="margin-top:auto;background:white;border:1px solid #eee;border-radius:25px;padding:6px 10px;font-size:0.55rem;color:#bbb;display:flex;align-items:center;justify-content:space-between;">
+                                            <span>Type a message...</span>
+                                            <div
+                                                style="width:22px;height:22px;background:#7B61FF;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                                                <i data-lucide="send" style="color:white;width:10px;height:10px;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== CARD 3: Share More (Bottom Left - Purple) ========== -->
+                    <div class="bento-card card-3 animate-scroll" style="align-items:center;gap:40px;">
+                        <div class="bento-content" style="flex:1;">
+                            <h2 class="bento-title" style="color:white;">Share more<br>than words</h2>
+                            <p class="bento-desc">Send photos, videos, voice messages, files, and more without limits.
+                            </p>
+                        </div>
+
+                        <!-- Phone 3: Media Sharing UI -->
+                        <div style="position:relative;flex-shrink:0;">
+                            <!-- Floating emojis -->
+                            <div
+                                style="position:absolute;top:-20px;right:-20px;font-size:2.5rem;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.2));z-index:10;">
+                                👏</div>
+                            <div
+                                style="position:absolute;bottom:30px;left:-30px;font-size:2rem;filter:drop-shadow(0 8px 15px rgba(0,0,0,0.2));z-index:10;">
+                                😍</div>
+
+                            <!-- Notification toast -->
+                            <div
+                                style="position:absolute;top:30px;left:-120px;background:white;border-radius:12px;padding:8px 12px;z-index:15;box-shadow:0 10px 30px rgba(0,0,0,0.15);display:flex;align-items:center;gap:8px;min-width:160px;">
+                                <div
+                                    style="width:28px;height:28px;background:#7B61FF;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i data-lucide="message-circle" style="color:white;width:14px;height:14px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.6rem;font-weight:700;margin-bottom:1px;">Yising Gage</div>
+                                    <div style="font-size:0.55rem;color:#bbb;">Check out these photos!</div>
+                                </div>
+                            </div>
+
+                            <div
+                                style="width:220px;height:400px;background:#1a1a1a;border-radius:38px;padding:8px;box-shadow:0 40px 80px rgba(0,0,0,0.3);border:3px solid #333;position:relative;z-index:4;">
+                                <div
+                                    style="width:100%;height:100%;border-radius:30px;background:white;overflow:hidden;display:flex;flex-direction:column;">
+                                    <!-- Header -->
+                                    <div
+                                        style="position:relative;padding:18px 15px 10px;border-bottom:1px solid #f0f0f0;">
+                                        <div
+                                            style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:80px;height:15px;background:#1a1a1a;border-radius:0 0 10px 10px;">
+                                        </div>
+                                        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+                                            <i data-lucide="chevron-left"
+                                                style="width:16px;height:16px;color:#7B61FF;"></i>
+                                            <div
+                                                style="width:28px;height:28px;background:linear-gradient(135deg,#7B61FF,#a18dff);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:white;">
+                                                Y</div>
+                                            <div style="flex:1;">
+                                                <div style="font-size:0.65rem;font-weight:800;">Yising Gage</div>
+                                                <div style="font-size:0.5rem;color:#9ca3af;">Online</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Chat content with photo share -->
+                                    <div
+                                        style="flex:1;padding:10px;background:#f9f9f9;display:flex;flex-direction:column;gap:8px;overflow:hidden;">
+                                        <div
+                                            style="background:white;padding:6px;border-radius:10px;font-size:0.55rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                            <div
+                                                style="font-size:0.6rem;font-weight:600;color:#7B61FF;margin-bottom:5px;">
+                                                Check out these photos!</div>
+                                            <div
+                                                style="display:grid;grid-template-columns:1fr 1fr;gap:4px;border-radius:8px;overflow:hidden;">
+                                                <img src="https://picsum.photos/seed/qc1/100/80"
+                                                    style="width:100%;height:70px;object-fit:cover;border-radius:6px;display:block;">
+                                                <img src="https://picsum.photos/seed/qc2/100/80"
+                                                    style="width:100%;height:70px;object-fit:cover;border-radius:6px;display:block;">
+                                            </div>
+                                        </div>
+                                        <div
+                                            style="background:#7B61FF;color:white;padding:8px 10px;border-radius:12px 12px 3px 12px;font-size:0.6rem;align-self:flex-end;">
+                                            Wow! You're amazing! 🔥<br><span style="opacity:0.7;font-size:0.5rem;">10:24
+                                                ✓✓</span></div>
+                                        <!-- Keyboard area -->
+                                        <div
+                                            style="margin-top:auto;background:white;border:1px solid #eee;border-radius:25px;padding:6px 10px;font-size:0.55rem;color:#bbb;display:flex;align-items:center;justify-content:space-between;">
+                                            <div style="display:flex;align-items:center;gap:6px;"><i data-lucide="image"
+                                                    style="width:12px;height:12px;color:#9ca3af;"></i><span>Send a
+                                                    photo...</span></div>
+                                            <i data-lucide="send" style="width:14px;height:14px;color:#7B61FF;"></i>
+                                        </div>
+                                    </div>
+                                    <!-- Bottom nav icons -->
+                                    <div
+                                        style="display:flex;justify-content:space-around;padding:8px;border-top:1px solid #f0f0f0;">
+                                        <i data-lucide="camera" style="width:16px;height:16px;color:#9ca3af;"></i>
+                                        <i data-lucide="image" style="width:16px;height:16px;color:#9ca3af;"></i>
+                                        <i data-lucide="map-pin" style="width:16px;height:16px;color:#9ca3af;"></i>
+                                        <i data-lucide="file" style="width:16px;height:16px;color:#9ca3af;"></i>
+                                        <i data-lucide="more-horizontal"
+                                            style="width:16px;height:16px;color:#9ca3af;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== CARD 4: All Your Chats (Bottom Right - Pink) ========== -->
+                    <div class="bento-card card-4 animate-scroll"
+                        style="flex-direction:column;justify-content:space-between;">
+                        <div>
+                            <h2 class="bento-title" style="font-size:2rem;">All your<br>chats,<br><span
+                                    class="text-purple">in one place</span></h2>
+                            <p class="bento-desc">Organized, easy to find, and always at your fingertips.</p>
+                        </div>
+
+                        <!-- Phone 4: Chat list with avatars -->
+                        <div style="display:flex;justify-content:center;align-items:flex-end;">
+                            <div
+                                style="width:210px;height:380px;background:#1a1a1a;border-radius:38px;padding:8px;box-shadow:0 30px 70px rgba(0,0,0,0.15);border:3px solid #333;">
+                                <div
+                                    style="width:100%;height:100%;border-radius:30px;background:white;overflow:hidden;display:flex;flex-direction:column;">
+                                    <!-- Header -->
+                                    <div
+                                        style="position:relative;padding:18px 15px 8px;border-bottom:1px solid #f0f0f0;">
+                                        <div
+                                            style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:80px;height:15px;background:#1a1a1a;border-radius:0 0 10px 10px;">
+                                        </div>
+                                        <div
+                                            style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+                                            <span style="font-size:0.8rem;font-weight:800;">QuickChat</span>
+                                            <div style="display:flex;gap:8px;">
+                                                <i data-lucide="search"
+                                                    style="width:14px;height:14px;color:#9ca3af;"></i>
+                                                <i data-lucide="edit" style="width:14px;height:14px;color:#7B61FF;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Avatar row -->
+                                    <div style="display:flex;gap:12px;padding:10px 12px;overflow-x:hidden;">
+                                        <div
+                                            style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:40px;">
+                                            <div
+                                                style="width:38px;height:38px;background:#E8F4FD;border-radius:50%;border:2px solid #7B61FF;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#7B61FF;">
+                                                Mi</div>
+                                            <span style="font-size:0.45rem;color:#666;text-align:center;">Min S.</span>
+                                        </div>
+                                        <div
+                                            style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:40px;">
+                                            <div
+                                                style="width:38px;height:38px;background:#FFF3CD;border-radius:50%;border:2px solid #FFD700;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#F59E0B;">
+                                                Yo</div>
+                                            <span style="font-size:0.45rem;color:#666;text-align:center;">Yoolie</span>
+                                        </div>
+                                        <div
+                                            style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:40px;">
+                                            <div
+                                                style="width:38px;height:38px;background:#E8FFE8;border-radius:50%;border:2px solid #22C55E;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#16A34A;">
+                                                Yi</div>
+                                            <span style="font-size:0.45rem;color:#666;text-align:center;">Yising</span>
+                                        </div>
+                                        <div
+                                            style="display:flex;flex-direction:column;align-items:center;gap:3px;min-width:40px;">
+                                            <div
+                                                style="width:38px;height:38px;background:#FFF0F0;border-radius:50%;border:2px solid #EF4444;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#EF4444;">
+                                                Se</div>
+                                            <span style="font-size:0.45rem;color:#666;text-align:center;">Se Han</span>
+                                        </div>
+                                    </div>
+                                    <!-- Chat list -->
+                                    <div
+                                        style="flex:1;padding:0 12px;display:flex;flex-direction:column;gap:10px;overflow:hidden;">
+                                        <!-- Chat Item 1 -->
+                                        <div
+                                            style="display:flex;align-items:center;gap:9px;padding-bottom:8px;border-bottom:1px solid #f9f9f9;">
+                                            <div
+                                                style="width:36px;height:36px;background:#E8F4FD;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#7B61FF;position:relative;">
+                                                <span>Mi</span>
+                                                <div
+                                                    style="position:absolute;bottom:0;right:0;width:9px;height:9px;background:#22C55E;border-radius:50%;border:2px solid white;">
+                                                </div>
+                                            </div>
+                                            <div style="flex:1;min-width:0;">
+                                                <div style="display:flex;justify-content:space-between;"><span
+                                                        style="font-size:0.65rem;font-weight:700;">Min Seok
+                                                        Hyung</span><span
+                                                        style="font-size:0.5rem;color:#9ca3af;">3m</span></div>
+                                                <div
+                                                    style="font-size:0.55rem;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                                    See you soon!</div>
+                                            </div>
+                                        </div>
+                                        <!-- Chat Item 2 -->
+                                        <div
+                                            style="display:flex;align-items:center;gap:9px;padding-bottom:8px;border-bottom:1px solid #f9f9f9;">
+                                            <div
+                                                style="width:36px;height:36px;background:#FFF3CD;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#F59E0B;">
+                                                Yo</div>
+                                            <div style="flex:1;min-width:0;">
+                                                <div
+                                                    style="display:flex;justify-content:space-between;align-items:center;">
+                                                    <span style="font-size:0.65rem;font-weight:700;">Yoolie Hyung</span>
+                                                    <div
+                                                        style="width:14px;height:14px;background:#7B61FF;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                                                        <span
+                                                            style="font-size:0.45rem;color:white;font-weight:700;">4</span>
+                                                    </div>
+                                                </div>
+                                                <div style="font-size:0.55rem;color:#9ca3af;">At home: Message</div>
+                                            </div>
+                                        </div>
+                                        <!-- Chat Item 3 -->
+                                        <div
+                                            style="display:flex;align-items:center;gap:9px;padding-bottom:8px;border-bottom:1px solid #f9f9f9;">
+                                            <div
+                                                style="width:36px;height:36px;background:#E8FFE8;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#16A34A;">
+                                                Yi</div>
+                                            <div style="flex:1;min-width:0;">
+                                                <div
+                                                    style="display:flex;justify-content:space-between;align-items:center;">
+                                                    <span style="font-size:0.65rem;font-weight:700;">Yising
+                                                        Gage</span><span
+                                                        style="font-size:0.5rem;color:#9ca3af;">12m</span></div>
+                                                <div style="font-size:0.55rem;color:#9ca3af;">📷 Photo</div>
+                                            </div>
+                                        </div>
+                                        <!-- Chat Item 4 -->
+                                        <div style="display:flex;align-items:center;gap:9px;">
+                                            <div
+                                                style="width:36px;height:36px;background:#FFF0F0;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#EF4444;">
+                                                Ba</div>
+                                            <div style="flex:1;min-width:0;">
+                                                <div style="display:flex;justify-content:space-between;"><span
+                                                        style="font-size:0.65rem;font-weight:700;">Baek
+                                                        Hyunnie</span><span
+                                                        style="font-size:0.5rem;color:#9ca3af;">1d</span></div>
+                                                <div style="font-size:0.55rem;color:#9ca3af;">Okay!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Bottom Tab Bar -->
+                                    <div
+                                        style="display:flex;justify-content:space-around;align-items:center;padding:8px 5px;border-top:1px solid #f0f0f0;">
+                                        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                                            <i data-lucide="message-circle"
+                                                style="width:16px;height:16px;color:#7B61FF;fill:#7B61FF;"></i>
+                                            <span style="font-size:0.45rem;color:#7B61FF;font-weight:700;">Chats</span>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                                            <i data-lucide="phone" style="width:16px;height:16px;color:#9ca3af;"></i>
+                                            <span style="font-size:0.45rem;color:#9ca3af;">Calls</span>
+                                        </div>
+                                        <div
+                                            style="width:32px;height:32px;background:#7B61FF;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(123,97,255,0.4);">
+                                            <i data-lucide="plus" style="width:16px;height:16px;color:white;"></i>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                                            <i data-lucide="users" style="width:16px;height:16px;color:#9ca3af;"></i>
+                                            <span style="font-size:0.45rem;color:#9ca3af;">Contacts</span>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+                                            <i data-lucide="settings" style="width:16px;height:16px;color:#9ca3af;"></i>
+                                            <span style="font-size:0.45rem;color:#9ca3af;">Settings</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+
+
+        <!-- Footer: Revamped Light Theme -->
+        <footer class="footer">
+            <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 40px;">
+                <div class="footer-main-grid">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <span class="logo-icon-wrapper"><i data-lucide="message-circle"
+                                    class="logo-icon-svg"></i></span>
+                            <span class="logo-text">QuickChat</span>
+                        </div>
+                        <p>Seamless Messaging.<br>Connected Conversations.</p>
+                        <div class="footer-socials">
+                            <a href="#"><i data-lucide="twitter"></i></a>
+                            <a href="#"><i data-lucide="instagram"></i></a>
+                            <a href="#"><i data-lucide="linkedin"></i></a>
+                            <a href="#"><i data-lucide="youtube"></i></a>
+                            <a href="#"><i data-lucide="facebook"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>Product</h4>
+                        <ul>
+                            <li><a href="#">Features</a></li>
+                            <li><a href="#">Messaging</a></li>
+                            <li><a href="#">Calls</a></li>
+                            <li><a href="#">Security</a></li>
+                            <li><a href="#">Premium</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Press</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">API</a></li>
+                            <li><a href="#">Developers</a></li>
+                            <li><a href="#">Community</a></li>
+                            <li><a href="#">Status</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Cookies</a></li>
+                            <li><a href="#">Licenses</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-newsletter">
+                        <h4>Stay updated</h4>
+                        <p>Subscribe to our newsletter for the latest updates and features.</p>
+                        <div class="newsletter-form">
+                            <input type="email" placeholder="Enter your email">
+                            <button class="btn-subscribe">Subscribe</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p class="copyright">© 2026 QuickChat. All rights reserved.</p>
+                    <div class="bottom-badges">
+                        <div class="badge-item"><i data-lucide="shield-check"></i> Secure</div>
+                        <div class="badge-item"><i data-lucide="lock"></i> Private</div>
+                        <div class="badge-item"><i data-lucide="check-circle-2"></i> Reliable</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+</body>
+
+</html>

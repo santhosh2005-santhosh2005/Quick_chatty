@@ -1,0 +1,28 @@
+{
+  "name": "yjs-relay-server",
+  "version": "1.0.0",
+  "description": "Yjs WebSocket relay server for real-time collaboration",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "level": "^8.0.0",
+    "ws": "^8.14.2",
+    "y-leveldb": "^0.1.2",
+    "yjs": "^13.6.8"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.1",
+    "puppeteer": "^21.5.0",
+    "supertest": "^6.3.3"
+  }
+}

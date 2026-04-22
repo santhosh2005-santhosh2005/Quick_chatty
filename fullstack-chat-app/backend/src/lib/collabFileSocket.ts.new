@@ -1,0 +1,335 @@
+import { Server, Socket } from 'socket.io';
+import {
+  initUpload,
+  completeUpload,
+  getFileTree,
+  createDirectory,
+  deleteFile as deleteFileService,
+  getDownloadUrl as getDownloadUrlService,
+  getFileMetadata,
+  FileMetadata
+} from '../services/collabFileService';
+import { redis } from './redis';
+
+interface FileEvent {
+  action: 'create' | 'update' | 'delete';
+  file: FileMetadata & {
+    uploaderName: string;
+    uploaderAvatar?: string;
+    uploaderStatus?: 'online' | 'idle' | 'offline';
+    lastSeen?: string;
+  };
+  timestamp: string;
+}
+
+interface UserInfo {
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  lastSeen?: string;
+  status?: 'online' | 'idle' | 'offline';
+  socketId?: string;
+}
+
+export function setupCollabFileSocket(io: Server) {
+  const collabFileNs = io.of('/collab-files');
+  const userPresence = new Map<string, UserInfo>();
+  
+  // Update user presence when status changes
+  function updateUserPresence(userId: string, status: 'online' | 'idle' | 'offline', socketId?: string) {
+    const user = userPresence.get(userId) || { userId, status, lastSeen: new Date().toISOString() };
+    user.status = status;
+    user.lastSeen = new Date().toISOString();
+    if (socketId) user.socketId = socketId;
+    if (status === 'offline') {
+      user.status = 'offline';
+    }
+    userPresence.set(userId, user);
+    return user;
+  }
+
+  // Get user info with online status
+  async function getUserWithStatus(userId: string): Promise<UserInfo> {
+    const user = userPresence.get(userId) || { userId, status: 'offline' as const };
+    return {
+      ...user,
+      status: user.status || 'offline',
+      lastSeen: user.lastSeen || new Date(0).toISOString()
+    };
+  }
+
+  // Enhance file metadata with uploader info
+  async function enhanceFileWithUploaderInfo(file: FileMetadata): Promise<FileMetadata & { uploaderStatus: string, lastSeen?: string }> {
+    const uploader = await getUserWithStatus(file.uploaderId);
+    return {
+      ...file,
+      uploaderName: uploader.userName || 'Unknown',
+      uploaderAvatar: uploader.userAvatar,
+      uploaderStatus: uploader.status,
+      lastSeen: uploader.lastSeen
+    };
+  }
+
+  collabFileNs.on('connection', (socket: Socket) => {
+    console.log('Client connected to collab-files namespace', socket.id);
+    
+    const userRooms = new Set<string>();
+    let currentUser: UserInfo | null = null;
+
+    // Handle joining a room
+    socket.on('join-room', async (roomId: string, userInfo: Omit<UserInfo, 'status' | 'lastSeen'>, ack: (response: any) => void) => {
+      try {
+        if (!userInfo.userId || !userInfo.userName) {
+          throw new Error('Missing required user information');
+        }
+
+        // Update user presence
+        currentUser = {
+          userId: userInfo.userId,
+          userName: userInfo.userName,
+          userAvatar: userInfo.userAvatar,
+          status: 'online',
+          lastSeen: new Date().toISOString(),
+          socketId: socket.id
+        };
+        updateUserPresence(userInfo.userId, 'online', socket.id);
+        
+        await socket.join(roomId);
+        userRooms.add(roomId);
+        
+        console.log(`User ${userInfo.userName} (${userInfo.userId}) joined room ${roomId}`);
+        
+        // Notify others in the room
+        socket.to(roomId).emit('user-joined', {
+          userId: userInfo.userId,
+          userName: userInfo.userName,
+          userAvatar: userInfo.userAvatar,
+          status: 'online',
+          timestamp: new Date().toISOString()
+        });
+        
+        // Get current file tree and enhance with uploader info
+        const fileTree = await getFileTree(roomId);
+        const enhancedTree = await Promise.all(
+          Object.values(fileTree).map(file => enhanceFileWithUploaderInfo(file))
+        );
+        
+        // Get list of online users in the room
+        const onlineUsers = Array.from(userPresence.values())
+          .filter(user => user.status === 'online' && user.userId !== userInfo.userId);
+        
+        ack({
+          success: true,
+          roomId,
+          tree: enhancedTree,
+          users: onlineUsers
+        });
+        
+      } catch (error) {
+        console.error('Error joining room:', error);
+        ack({ 
+          success: false, 
+          message: 'Failed to join room', 
+          error: error.message 
+        });
+      }
+    });
+
+    // Handle file upload initialization
+    socket.on('file-upload-init', async (
+      { roomId, path, name, size, mime },
+      ack: (response: any) => void
+    ) => {
+      try {
+        if (!currentUser) {
+          throw new Error('User not authenticated');
+        }
+        
+        console.log(`[${roomId}] ${currentUser.userName} initiated upload: ${path}/${name} (${size} bytes)`);
+        const result = await initUpload(roomId, currentUser.userId, path, name, size, mime);
+        
+        // Add uploader info to the response
+        ack({ 
+          success: true, 
+          ...result,
+          uploaderName: currentUser.userName,
+          uploaderAvatar: currentUser.userAvatar
+        });
+      } catch (error) {
+        console.error('Upload init error:', error);
+        ack({ success: false, error: error.message });
+      }
+    });
+
+    // Handle file upload completion
+    socket.on('file-upload-complete', async (
+      { roomId, uploadId, path, name, size, mime, version },
+      ack: (response: any) => void
+    ) => {
+      try {
+        if (!currentUser) {
+          throw new Error('User not authenticated');
+        }
+        
+        console.log(`[${roomId}] ${currentUser.userName} completed upload: ${path}/${name}`);
+        const fileMeta = await completeUpload(roomId, currentUser.userId, uploadId, path, name, size, mime, version);
+        
+        // Enhance file metadata with uploader info
+        const enhancedMeta = await enhanceFileWithUploaderInfo({
+          ...fileMeta,
+          uploaderName: currentUser.userName,
+          uploaderAvatar: currentUser.userAvatar
+        });
+        
+        // Broadcast file update to all clients in the room
+        const event: FileEvent = {
+          action: version ? 'update' : 'create',
+          file: enhancedMeta,
+          timestamp: new Date().toISOString()
+        };
+        
+        collabFileNs.to(roomId).emit('file-event', { roomId, event });
+        ack({ success: true, file: enhancedMeta });
+      } catch (error) {
+        console.error('Upload complete error:', error);
+        ack({ success: false, error: error.message });
+      }
+    });
+
+    // Handle directory creation
+    socket.on('create-directory', async ({ roomId, path }, ack: (response: any) => void) => {
+      try {
+        if (!currentUser) {
+          throw new Error('User not authenticated');
+        }
+        
+        console.log(`[${roomId}] ${currentUser.userName} created directory: ${path}`);
+        const dirMeta = await createDirectory(roomId, path, currentUser.userId);
+        
+        // Enhance directory metadata with uploader info
+        const enhancedMeta = await enhanceFileWithUploaderInfo({
+          ...dirMeta,
+          uploaderName: currentUser.userName,
+          uploaderAvatar: currentUser.userAvatar
+        });
+        
+        // Broadcast directory creation
+        const event: FileEvent = {
+          action: 'create',
+          file: enhancedMeta,
+          timestamp: new Date().toISOString()
+        };
+        
+        collabFileNs.to(roomId).emit('file-event', { roomId, event });
+        ack({ success: true, directory: enhancedMeta });
+      } catch (error) {
+        console.error('Create directory error:', error);
+        ack({ success: false, error: error.message });
+      }
+    });
+
+    // Handle file deletion
+    socket.on('delete-file', async ({ roomId, path }, ack: (response: any) => void) => {
+      try {
+        if (!currentUser) {
+          throw new Error('User not authenticated');
+        }
+        
+        console.log(`[${roomId}] ${currentUser.userName} deleted: ${path}`);
+        const fileTree = await getFileTree(roomId);
+        const file = fileTree[path];
+        
+        if (!file) {
+          throw new Error('File not found');
+        }
+        
+        await deleteFileService(roomId, path);
+        
+        // Get uploader info for the file being deleted
+        const uploader = await getUserWithStatus(file.uploaderId);
+        
+        // Broadcast file deletion
+        const event: FileEvent = {
+          action: 'delete',
+          file: {
+            path,
+            name: file.name,
+            size: file.size,
+            mime: file.mime,
+            version: file.version,
+            timestamp: new Date().toISOString(),
+            uploaderId: currentUser.userId,
+            uploaderName: currentUser.userName,
+            uploaderAvatar: currentUser.userAvatar,
+            uploaderStatus: uploader.status,
+            lastSeen: uploader.lastSeen,
+            isDirectory: file.isDirectory,
+          },
+          timestamp: new Date().toISOString()
+        };
+        
+        collabFileNs.to(roomId).emit('file-event', { roomId, event });
+        ack({ success: true });
+      } catch (error) {
+        console.error('Delete file error:', error);
+        ack({ success: false, error: error.message });
+      }
+    });
+
+    // Handle file download URL request
+    socket.on('get-download-url', async ({ roomId, path }, ack: (response: any) => void) => {
+      try {
+        console.log(`[${roomId}] Get download URL: ${path}`);
+        const url = await getDownloadUrlService(roomId, path);
+        ack({ success: true, url });
+      } catch (error) {
+        console.error('Get download URL error:', error);
+        ack({ success: false, error: error.message });
+      }
+    });
+
+    // Handle user status update (e.g., idle, active)
+    socket.on('update-status', async ({ status }: { status: 'online' | 'idle' }) => {
+      if (!currentUser) return;
+      
+      const user = updateUserPresence(currentUser.userId, status, socket.id);
+      userRooms.forEach(roomId => {
+        socket.to(roomId).emit('user-status-changed', {
+          userId: user.userId,
+          userName: user.userName,
+          userAvatar: user.userAvatar,
+          status: user.status,
+          lastSeen: user.lastSeen,
+          timestamp: new Date().toISOString()
+        });
+      });
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', () => {
+      if (currentUser) {
+        console.log(`User ${currentUser.userName} (${currentUser.userId}) disconnected`);
+        
+        // Mark user as offline in all rooms
+        userRooms.forEach(roomId => {
+          const user = updateUserPresence(currentUser!.userId, 'offline');
+          socket.to(roomId).emit('user-left', {
+            userId: user.userId,
+            userName: user.userName,
+            userAvatar: user.userAvatar,
+            status: 'offline',
+            lastSeen: user.lastSeen,
+            timestamp: new Date().toISOString()
+          });
+        });
+        
+        // Clear user data
+        userRooms.clear();
+        currentUser = null;
+      }
+      console.log('Client disconnected from collab-files namespace', socket.id);
+    });
+  });
+  
+  return collabFileNs;
+}
