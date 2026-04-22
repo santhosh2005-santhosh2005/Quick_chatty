@@ -43,10 +43,23 @@ app.use(cookieParser());
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : ["http://localhost:5173", "http://localhost:5174", "http://localhost:5195", "http://localhost:5196", "http://localhost:5731", "http://127.0.0.1:5173", "http://127.0.0.1:5174", "http://127.0.0.1:5731"],
+  origin: (origin, callback) => {
+    // Allow same-origin requests (where origin is undefined) and explicit cors origins
+    const allowed = process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : [];
+    if (!origin || allowed.includes(origin) || origin.endsWith(".onrender.com")) {
+      callback(null, true);
+    } else {
+      // For development
+      if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    }
+  },
   credentials: true,
-  methods: process.env.ALLOWED_METHODS ? process.env.ALLOWED_METHODS.split(',') : ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: process.env.ALLOWED_HEADERS ? process.env.ALLOWED_HEADERS.split(',') : ["Content-Type", "Authorization", "x-access-token"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-access-token"],
 };
 
 app.use(cors(corsOptions));
