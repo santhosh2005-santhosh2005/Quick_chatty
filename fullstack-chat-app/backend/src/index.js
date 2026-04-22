@@ -78,13 +78,23 @@ if (process.env.NODE_ENV === "production") {
 
 // Start server
 const startServer = async () => {
+  console.log("Starting server initialization...");
   try {
+    if (!process.env.MONGODB_URI) {
+        throw new Error("MONGODB_URI is not defined in environment variables");
+    }
     await connectDB();
+    console.log("✅ Database connected successfully");
+    
     server.listen(PORT, () => {
       console.log("🚀 Server is running on PORT:" + PORT);
+      console.log("NODE_ENV:", process.env.NODE_ENV);
     });
   } catch (error) {
-    console.error("❌ Failed to start server:", error.message);
+    console.error("❌ CRITICAL: Failed to start server!");
+    console.error("Error Message:", error.message);
+    console.error("Stack Trace:", error.stack);
+    process.exit(1); // Force exit to notify Render of the failure
   }
 };
 
