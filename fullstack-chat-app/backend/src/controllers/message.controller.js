@@ -3,7 +3,7 @@ import Message from "../models/message.model.js";
 
 import cloudinary from "../lib/cloudinary.js";
 // Import socket functions
-import { getReceiverSocketId, getIO } from "../lib/socket.js";
+import { getReceiverSocketIds, getIO } from "../lib/socket.js";
 
 import fs from "fs";
 import path from "path";
@@ -113,19 +113,20 @@ export const sendMessage = async (req, res) => {
       _encryptedText: encryptedText // Send encrypted text for demo
     };
 
-    // Use socket functions
-    const receiverSocketId = getReceiverSocketId(receiverId);
+    // Use socket functions - emit to the user's room (all their sockets)
+    const receiverSocketIds = getReceiverSocketIds(receiverId);
     const io = getIO();
 
     console.log(`[sendMessage] Processing message from ${senderId} to ${receiverId}`);
-    console.log(`[sendMessage] PDF present: ${!!pdf}, URL: ${pdfUrl?.substring(0, 30)}...`);
-    console.log(`[sendMessage] Receiver Socket ID: ${receiverSocketId}`);
+    console.log(`[sendMessage] PDF present: ${!!pdf}, URL: ${pdf ? pdf.substring(0, 30) : 'none'}...`);
+    console.log(`[sendMessage] Receiver Socket IDs: ${receiverSocketIds.length} connections`);
 
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", socketMessage);
-      console.log(`[sendMessage] Emitted 'newMessage' to ${receiverSocketId}`);
+    // Emit to the receiver's room (userId as room name) - this will reach all their sockets
+    if (receiverSocketIds.length > 0) {
+      io.to(receiverId).emit("newMessage", socketMessage);
+      console.log(`[sendMessage] ✅ Emitted 'newMessage' to room ${receiverId} (${receiverSocketIds.length} sockets)`);
     } else {
-      console.log(`[sendMessage] Receiver ${receiverId} is offline or not found in socket map`);
+      console.log(`[sendMessage] ⚠️ Receiver ${receiverId} is offline or not found in socket map`);
     }
 
     res.status(201).json(socketMessage);
@@ -149,11 +150,12 @@ export const deleteMessageForYou = async (req, res) => {
 
     // Emit delete event only to the current user
     // Use socket functions
-    const senderSocketId = getReceiverSocketId(userId);
+    const senderSocketIds = getReceiverSocketIds(userId);
     const io = getIO();
 
-    if (senderSocketId) {
-      io.to(senderSocketId).emit("messageDeletedForYou", { messageId });
+    if (senderSocketIds.length > 0) {
+      io.to(userId).emit("messageDeletedForYou", { messageId });
+      console.log(`[deleteMessageForYou] ✅ Emitted to room ${userId}`);
     }
 
     res.status(200).json({ message: "Message deleted for you" });
@@ -186,15 +188,19 @@ export const deleteMessageForEveryone = async (req, res) => {
     // Emit delete event to both sender and receiver
     // Use socket functions
     const io = getIO();
-    const receiverSocketId = getReceiverSocketId(message.receiverId.toString());
-    const senderSocketId = getReceiverSocketId(message.senderId.toString());
+    const receiverSocketIds = getReceiverSocketIds(message.receiverId.toString());
+    const senderSocketIds = getReceiverSocketIds(message.senderId.toString());
 
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("messageDeletedForEveryone", { messageId });
+    // Emit to receiver's room
+    if (receiverSocketIds.length > 0) {
+      io.to(message.receiverId.toString()).emit("messageDeletedForEveryone", { messageId });
+      console.log(`[deleteForEveryone] ✅ Emitted to receiver room ${message.receiverId}`);
     }
 
-    if (senderSocketId && senderSocketId !== receiverSocketId) {
-      io.to(senderSocketId).emit("messageDeletedForEveryone", { messageId });
+    // Emit to sender's room (if different from receiver)
+    if (senderSocketIds.length > 0 && message.senderId.toString() !== message.receiverId.toString()) {
+      io.to(message.senderId.toString()).emit("messageDeletedForEveryone", { messageId });
+      console.log(`[deleteForEveryone] ✅ Emitted to sender room ${message.senderId}`);
     }
 
     res.status(200).json({ message: "Message deleted for everyone" });
@@ -221,21 +227,25 @@ export const deleteAllMessages = async (req, res) => {
     // Emit delete all event to both users
     // Use socket functions
     const io = getIO();
-    const receiverSocketId = getReceiverSocketId(userToChatId);
-    const senderSocketId = getReceiverSocketId(myId);
+    const receiverSocketIds = getReceiverSocketIds(userToChatId);
+    const senderSocketIds = getReceiverSocketIds(myId);
 
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("allMessagesDeleted", {
+    // Emit to receiver's room
+    if (receiverSocketIds.length > 0) {
+      io.to(userToChatId).emit("allMessagesDeleted", {
         user1: myId,
         user2: userToChatId
       });
+      console.log(`[deleteAll] ✅ Emitted to receiver room ${userToChatId}`);
     }
 
-    if (senderSocketId && senderSocketId !== receiverSocketId) {
-      io.to(senderSocketId).emit("allMessagesDeleted", {
+    // Emit to sender's room (if different from receiver)
+    if (senderSocketIds.length > 0 && myId.toString() !== userToChatId.toString()) {
+      io.to(myId.toString()).emit("allMessagesDeleted", {
         user1: myId,
         user2: userToChatId
       });
+      console.log(`[deleteAll] ✅ Emitted to sender room ${myId}`);
     }
 
     res.status(200).json({

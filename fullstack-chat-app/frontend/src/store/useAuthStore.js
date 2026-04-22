@@ -186,12 +186,12 @@ export const useAuthStore = create((set, get) => ({
 
     console.log("Creating new socket connection for user:", authUser._id);
 
-    // Point all development connections strictly to the main backend port
+    // Use the correct backend port from environment
     const url = import.meta.env.MODE === "development" 
       ? "http://localhost:5001" 
       : (import.meta.env.VITE_SOCKET_URL || "/");
 
-    console.log("Creating new socket connection for user:", authUser._id, "URL:", url);
+    console.log("🔌 Connecting to socket server:", url);
 
     const newSocket = io(url, {
       query: {
@@ -200,39 +200,39 @@ export const useAuthStore = create((set, get) => ({
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
     });
     
-    // Explicitly connect
-    newSocket.connect();
-    
     newSocket.on("connect", () => {
-      console.log("Socket connected successfully:", newSocket.id);
+      console.log("✅ Socket connected successfully:", newSocket.id);
       newSocket.emit("requestOnlineUsers");
     });
     
     newSocket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
+      console.error("❌ Socket connection error:", error.message);
+    });
+
+    newSocket.on("disconnect", (reason) => {
+      console.log("⚠️ Socket disconnected:", reason);
     });
 
     set({ socket: newSocket });
 
-    console.log("Setting up socket event listener for getOnlineUsers");
+    console.log("Setting up socket event listeners...");
+    
+    // Online users listener
     newSocket.on("getOnlineUsers", (userIds) => {
-      console.log("Received online users update:", userIds);
+      console.log("👥 Received online users update:", userIds);
       set({ onlineUsers: [...userIds] });
     });
     
-    // Master Message Listener - Always active, never misses a beat
+    // Message listener - will be handled by useChatStore
     newSocket.on("newMessage", (newMessage) => {
-      console.log("[Socket Master] New message received globally:", newMessage);
-      // We'll import and use the ChatStore action directly
-      const chatStore = window.chatStore; // Or use a direct import if possible
-      if (chatStore) chatStore.handleNewMessage(newMessage);
-    });
-    
-    // Also listen for any disconnect events
-    newSocket.on("disconnect", (reason) => {
-      console.log("Socket disconnected:", reason);
+      console.log("📨 [AuthStore] New message received:", newMessage);
+      // Import and use the ChatStore action directly
+      import("./useChatStore").then(({ useChatStore }) => {
+        useChatStore.getState().handleNewMessage(newMessage);
+      });
     });
   },
   disconnectSocket: () => {

@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
-import { getReceiverSocketId, getIO } from "../lib/socket.js";
+import { getReceiverSocketIds, getIO } from "../lib/socket.js";
 
 export const searchUsers = async (req, res) => {
   try {
@@ -53,15 +53,19 @@ export const sendInvitation = async (req, res) => {
     await newMessage.save();
     
     // Send the invitation through socket to appear in user's chat
-    const receiverSocketId = getReceiverSocketId(userId);
+    const receiverSocketIds = getReceiverSocketIds(userId);
     const io = getIO();
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage);
-      io.to(receiverSocketId).emit("invitationReceived", {
+    if (receiverSocketIds.length > 0) {
+      // Emit to the user's room (userId as room name)
+      io.to(userId).emit("newMessage", newMessage);
+      io.to(userId).emit("invitationReceived", {
         message: newMessage,
         sessionId: sessionId,
         shareLink: shareLink
       });
+      console.log(`[sendInvitation] ✅ Emitted invitation to room ${userId}`);
+    } else {
+      console.log(`[sendInvitation] ⚠️ User ${userId} is offline`);
     }
     
     res.json({ message: "Invitation sent successfully", messageId: newMessage._id });

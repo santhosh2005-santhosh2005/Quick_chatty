@@ -9,10 +9,10 @@ const server = http.createServer(app);
 let io;
 const userSocketMap = {}; // {userId: Set(socketId1, socketId2)}
 
-// Function to get receiver socket ID (now returns the userId as a room name)
-export function getReceiverSocketId(userId) {
-  // If user is online (has at least one socket), return the userId as the room name
-  return userSocketMap[userId] ? userId : null;
+// Function to get receiver socket IDs (returns array of socket IDs for a user)
+export function getReceiverSocketIds(userId) {
+  // If user is online (has at least one socket), return all their socket IDs
+  return userSocketMap[userId] ? Array.from(userSocketMap[userId]) : [];
 }
 
 // Export io object
@@ -44,14 +44,14 @@ export function initializeSocket(server) {
       }
       userSocketMap[userIdStr].add(socket.id);
       
-      // Join a room specifically for this user
+      // Join a room specifically for this user (using userId as room name)
       socket.join(userIdStr);
-      console.log(`User ${userIdStr} connected with socket ${socket.id}. Total connections: ${userSocketMap[userIdStr].size}`);
+      console.log(`✅ User ${userIdStr} connected with socket ${socket.id}. Total connections: ${userSocketMap[userIdStr].size}`);
     } else {
-      console.log("User connected without userId", socket.id);
+      console.log("⚠️ User connected without userId", socket.id);
     }
 
-    // io.emit() is used to send events to all the connected clients
+    // Broadcast online users to all clients
     const onlineUsers = Object.keys(userSocketMap);
     console.log(`[Socket] Broadcasting online users: ${JSON.stringify(onlineUsers)}`);
     io.emit("getOnlineUsers", onlineUsers);
@@ -85,10 +85,11 @@ export function initializeSocket(server) {
 
     // 1. Request a call
     socket.on("call:request", ({ to, callerInfo, type }) => {
-      const receiverSocketId = getReceiverSocketId(to);
-      if (receiverSocketId) {
-        console.log(`Call request from ${socket.id} to ${to} (${receiverSocketId})`);
-        io.to(receiverSocketId).emit("call:incoming", {
+      const receiverSocketIds = getReceiverSocketIds(to);
+      if (receiverSocketIds.length > 0) {
+        console.log(`📞 Call request from ${userId} to ${to} (${receiverSocketIds.length} sockets)`);
+        // Emit to the user's room (all their sockets)
+        io.to(to).emit("call:incoming", {
           from: userId,
           callerInfo,
           type // 'voice' or 'video'
@@ -98,10 +99,10 @@ export function initializeSocket(server) {
 
     // 2. Accept a call
     socket.on("call:accepted", ({ to }) => {
-      const callerSocketId = getReceiverSocketId(to);
-      if (callerSocketId) {
-        console.log(`Call accepted by ${userId} for ${to}`);
-        io.to(callerSocketId).emit("call:accepted", {
+      const callerSocketIds = getReceiverSocketIds(to);
+      if (callerSocketIds.length > 0) {
+        console.log(`✅ Call accepted by ${userId} for ${to}`);
+        io.to(to).emit("call:accepted", {
           from: userId
         });
       }
@@ -109,10 +110,10 @@ export function initializeSocket(server) {
 
     // 3. Reject a call
     socket.on("call:rejected", ({ to }) => {
-      const callerSocketId = getReceiverSocketId(to);
-      if (callerSocketId) {
-        console.log(`Call rejected by ${userId} for ${to}`);
-        io.to(callerSocketId).emit("call:rejected", {
+      const callerSocketIds = getReceiverSocketIds(to);
+      if (callerSocketIds.length > 0) {
+        console.log(`❌ Call rejected by ${userId} for ${to}`);
+        io.to(to).emit("call:rejected", {
           from: userId
         });
       }
@@ -120,10 +121,10 @@ export function initializeSocket(server) {
 
     // 4. End a call
     socket.on("call:ended", ({ to }) => {
-      const otherSocketId = getReceiverSocketId(to);
-      if (otherSocketId) {
-        console.log(`Call ended by ${userId} with ${to}`);
-        io.to(otherSocketId).emit("call:ended", {
+      const otherSocketIds = getReceiverSocketIds(to);
+      if (otherSocketIds.length > 0) {
+        console.log(`📴 Call ended by ${userId} with ${to}`);
+        io.to(to).emit("call:ended", {
           from: userId
         });
       }
@@ -131,9 +132,9 @@ export function initializeSocket(server) {
 
     // 5. Generic WebRTC Signaling (Offer, Answer, ICE Candidates)
     socket.on("webrtc:signal", ({ to, signal }) => {
-      const receiverSocketId = getReceiverSocketId(to);
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("webrtc:signal", {
+      const receiverSocketIds = getReceiverSocketIds(to);
+      if (receiverSocketIds.length > 0) {
+        io.to(to).emit("webrtc:signal", {
           from: userId,
           signal
         });

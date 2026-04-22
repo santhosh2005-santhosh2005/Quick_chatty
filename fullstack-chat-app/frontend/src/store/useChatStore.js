@@ -143,25 +143,36 @@ export const useChatStore = create((set, get) => ({
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState().socket;
-    if (!socket) return;
+    if (!socket) {
+      console.log("⚠️ No socket available for subscribing to messages");
+      return;
+    }
+
+    console.log("🔔 Subscribing to messages for user:", selectedUser._id);
 
     // Remove existing listener to avoid duplicates
     socket.off("newMessage");
+    
     socket.on("newMessage", (newMessage) => {
-      console.log("[useChatStore] Received 'newMessage' event:", newMessage);
+      console.log("📨 [useChatStore] Received 'newMessage' event:", newMessage);
       
       const { selectedUser } = get();
-      if (!selectedUser) return;
+      if (!selectedUser) {
+        console.log("⚠️ No user selected, message will be handled by handleNewMessage");
+        return;
+      }
 
       const isMessageSentFromSelectedUser = String(newMessage.senderId) === String(selectedUser._id);
 
       if (isMessageSentFromSelectedUser) {
-        // Use functional set to ensure we never miss a message due to state timing
+        // Message is from the user we're currently chatting with - add to messages
+        console.log("✅ Message is from selected user, adding to chat");
         set((state) => ({
           messages: [...state.messages, newMessage],
         }));
       } else {
-        // If we're NOT chatting with them, track them as unread
+        // Message is from someone else - track as unread
+        console.log("📬 Message is from another user, marking as unread");
         set((state) => {
           if (!state.unreadUsers.includes(newMessage.senderId)) {
             return { unreadUsers: [...state.unreadUsers, newMessage.senderId] };
@@ -273,13 +284,17 @@ export const useChatStore = create((set, get) => ({
   handleNewMessage: (newMessage) => {
     const { selectedUser, unreadUsers, getUsers } = get();
     
+    console.log("📨 [handleNewMessage] Processing message:", newMessage);
+    
     // 1. If it's for the currently open chat
     if (selectedUser && String(newMessage.senderId) === String(selectedUser._id)) {
+      console.log("✅ Adding message to current chat");
       set((state) => ({
         messages: [...state.messages, newMessage],
       }));
     } else {
       // 2. If it's for another chat, mark as unread and refresh sidebar
+      console.log("📬 Message from different user, marking as unread");
       if (!unreadUsers.includes(newMessage.senderId)) {
         set((state) => ({ unreadUsers: [...state.unreadUsers, newMessage.senderId] }));
       }
