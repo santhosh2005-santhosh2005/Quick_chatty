@@ -45,8 +45,10 @@ export const useChatStore = create((set, get) => ({
     const { selectedUser, messages } = get();
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-      // Use get().messages to ensure we append to the LATEST state
-      set({ messages: [...get().messages, res.data] });
+      // Use functional set to append the message to the current state
+      set((state) => ({
+        messages: [...state.messages, res.data]
+      }));
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -154,16 +156,18 @@ export const useChatStore = create((set, get) => ({
       const isMessageSentFromSelectedUser = String(newMessage.senderId) === String(selectedUser._id);
 
       if (isMessageSentFromSelectedUser) {
-        // Always use get().messages to avoid stale closure issues
-        set({
-          messages: [...get().messages, newMessage],
-        });
+        // Use functional set to ensure we never miss a message due to state timing
+        set((state) => ({
+          messages: [...state.messages, newMessage],
+        }));
       } else {
         // If we're NOT chatting with them, track them as unread
-        const { unreadUsers } = get();
-        if (!unreadUsers.includes(newMessage.senderId)) {
-          set({ unreadUsers: [...unreadUsers, newMessage.senderId] });
-        }
+        set((state) => {
+          if (!state.unreadUsers.includes(newMessage.senderId)) {
+            return { unreadUsers: [...state.unreadUsers, newMessage.senderId] };
+          }
+          return state;
+        });
         get().getUsers(); 
       }
     });
