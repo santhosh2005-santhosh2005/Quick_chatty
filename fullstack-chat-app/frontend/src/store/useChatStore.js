@@ -45,7 +45,8 @@ export const useChatStore = create((set, get) => ({
     const { selectedUser, messages } = get();
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-      set({ messages: [...messages, res.data] });
+      // Use get().messages to ensure we append to the LATEST state
+      set({ messages: [...get().messages, res.data] });
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -147,22 +148,23 @@ export const useChatStore = create((set, get) => ({
     socket.on("newMessage", (newMessage) => {
       console.log("[useChatStore] Received 'newMessage' event:", newMessage);
       
-      const { selectedUser, messages } = get();
-      const isMessageSentFromSelectedUser = selectedUser && String(newMessage.senderId) === String(selectedUser._id);
+      const { selectedUser } = get();
+      if (!selectedUser) return;
+
+      const isMessageSentFromSelectedUser = String(newMessage.senderId) === String(selectedUser._id);
 
       if (isMessageSentFromSelectedUser) {
-        // If we're chatting with them, just add to the message list
+        // Always use get().messages to avoid stale closure issues
         set({
-          messages: [...messages, newMessage],
+          messages: [...get().messages, newMessage],
         });
       } else {
         // If we're NOT chatting with them, track them as unread
-        console.log(`[useChatStore] New background message from ${newMessage.senderId}`);
         const { unreadUsers } = get();
         if (!unreadUsers.includes(newMessage.senderId)) {
           set({ unreadUsers: [...unreadUsers, newMessage.senderId] });
         }
-        get().getUsers(); // Refresh sidebar
+        get().getUsers(); 
       }
     });
 
