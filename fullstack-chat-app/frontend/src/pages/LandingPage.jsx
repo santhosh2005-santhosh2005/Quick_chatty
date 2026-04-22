@@ -144,7 +144,7 @@ const LandingPage = () => {
                       </div>
                       <div style={{display: 'flex', gap: '12px', marginBottom: '25px'}}>
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
-                           <div style={{width: '45px', height: '45px', borderRadius: '50%', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyCenter: 'center', border: '2px dashed #d1d5db'}}><Plus size={20} /></div>
+                           <div style={{width: '45px', height: '45px', borderRadius: '50%', background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #d1d5db'}}><Plus size={20} /></div>
                            <span style={{fontSize: '0.65rem'}}>Add</span>
                         </div>
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px'}}>
