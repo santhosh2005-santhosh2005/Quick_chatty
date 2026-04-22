@@ -1,9 +1,8 @@
 import axios from "axios";
 
-// Use VITE_API_URL from environment variables, default to localhost:5001
-const BASE_URL = import.meta.env.VITE_API_URL 
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : "http://localhost:5001/api";
+const BASE_URL = import.meta.env.MODE === "development" 
+  ? "http://localhost:5001/api"
+  : "/api";
 
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
