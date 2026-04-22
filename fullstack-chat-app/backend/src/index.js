@@ -43,7 +43,7 @@ app.use(cookieParser());
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : ["http://localhost:5173", "http://localhost:5174", "http://localhost:5195", "http://localhost:5196", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
+  origin: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : ["http://localhost:5173", "http://localhost:5174", "http://localhost:5195", "http://localhost:5196", "http://localhost:5731", "http://127.0.0.1:5173", "http://127.0.0.1:5174", "http://127.0.0.1:5731"],
   credentials: true,
   methods: process.env.ALLOWED_METHODS ? process.env.ALLOWED_METHODS.split(',') : ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: process.env.ALLOWED_HEADERS ? process.env.ALLOWED_HEADERS.split(',') : ["Content-Type", "Authorization", "x-access-token"],
