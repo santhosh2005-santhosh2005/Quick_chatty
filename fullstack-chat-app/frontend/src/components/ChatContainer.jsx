@@ -67,7 +67,7 @@ const ChatContainer = () => {
       <ChatHeader onDeleteAll={handleDeleteAllMessages} />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => {
-          const isOwnMessage = message.senderId === authUser._id;
+          const isOwnMessage = String(message.senderId) === String(authUser._id);
           return (
             <div key={message._id} className={`chat ${isOwnMessage ? "chat-end" : "chat-start"}`}>
               <div className="chat-image avatar">
