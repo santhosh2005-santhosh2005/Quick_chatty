@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import "./landing.css";
+import "../landing.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
